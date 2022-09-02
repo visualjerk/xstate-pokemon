@@ -1,25 +1,42 @@
-import { createMachine, assign } from 'xstate';
+import { createMachine, assign } from 'xstate'
+import { pokemonHttpRepository } from '@infrastructure/repositories/pokemon-http'
+import { IPokemon } from '@domain/entities/pokemon'
 
-function fetchPokemonDetails({ name }) {
-  return fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
-    .then((response) => response.json())
-    .then((json) => json);
+interface TPokemonDetailsContext {
+  details: IPokemon
+  error: Error
 }
 
+type TPokemonDetailsStateContext =
+  | {
+      value: 'loading'
+      context: TPokemonDetailsContext & {
+        details: null
+        error: null
+      }
+    }
+  | {
+      value: 'loaded'
+      context: TPokemonDetailsContext & {
+        error: null
+      }
+    }
+  | {
+      value: 'failed'
+      context: TPokemonDetailsContext & {
+        details: null
+      }
+    }
+
 export const pokemonDetails = (name: string) =>
-  createMachine({
+  createMachine<TPokemonDetailsContext, any, TPokemonDetailsStateContext>({
     id: 'pokemon',
     initial: 'loading',
-    context: {
-      name,
-      details: [],
-      error: null,
-    },
     states: {
       loading: {
         invoke: {
           id: 'fetch-pokemon-details',
-          src: fetchPokemonDetails,
+          src: () => pokemonHttpRepository.getDetails(name),
           onDone: {
             target: 'loaded',
             actions: assign({
@@ -37,4 +54,4 @@ export const pokemonDetails = (name: string) =>
       loaded: {},
       failed: {},
     },
-  });
+  })

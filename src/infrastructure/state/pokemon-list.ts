@@ -1,26 +1,48 @@
-import { createMachine, assign } from 'xstate';
+import { createMachine, assign } from 'xstate'
+import { pokemonHttpRepository } from '@infrastructure/repositories/pokemon-http'
+import { IPokemon } from '@domain/entities/pokemon'
 
 // TODO: Implement Actors
 // https://xstate.js.org/docs/tutorials/reddit.html#spawning-subreddit-actors
 
-function fetchPokemonList() {
-  return fetch(`https://pokeapi.co/api/v2/pokemon`)
-    .then((response) => response.json())
-    .then((json) => json);
+interface TPokemonListContext {
+  list: IPokemon[]
+  error: Error
 }
 
-export const pokemonList = createMachine({
+type TPokemonListStateContext =
+  | {
+      value: 'loading'
+      context: TPokemonListContext & {
+        list: null
+        error: null
+      }
+    }
+  | {
+      value: 'loaded'
+      context: TPokemonListContext & {
+        error: null
+      }
+    }
+  | {
+      value: 'failed'
+      context: TPokemonListContext & {
+        list: null
+      }
+    }
+
+export const pokemonList = createMachine<
+  TPokemonListContext,
+  any,
+  TPokemonListStateContext
+>({
   id: 'pokemon',
   initial: 'loading',
-  context: {
-    list: [],
-    error: null,
-  },
   states: {
     loading: {
       invoke: {
         id: 'fetch-pokemon-list',
-        src: fetchPokemonList,
+        src: pokemonHttpRepository.getList,
         onDone: {
           target: 'loaded',
           actions: assign({
@@ -38,4 +60,4 @@ export const pokemonList = createMachine({
     loaded: {},
     failed: {},
   },
-});
+})
