@@ -1,12 +1,12 @@
 <template>
   <h1>Pokemon List</h1>
-  <div v-if="state.value === 'loading'">Loading ...</div>
-  <div v-if="state.value === 'failed'">
+  <div v-if="hasState('loading')">Loading ...</div>
+  <div v-if="hasState('failed')">
     <h2>Failed to load</h2>
-    <p>Error: {{ state.context.error }}</p>
+    <p>Error: {{ error }}</p>
   </div>
-  <ul v-if="state.value === 'loaded'">
-    <li v-for="pokemon in state.context.list" :key="pokemon.name">
+  <ul v-if="hasState('loaded')">
+    <li v-for="pokemon in list" :key="pokemon.name">
       <router-link :to="`/pokemon/${pokemon.name}`">
         {{ pokemon.name }}
       </router-link>
@@ -15,8 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { useMachine } from '@xstate/vue'
-import { pokemonList } from '@infrastructure/state/pokemon-list'
+import { usePokemonList } from '@application/pokemon-list'
 
-const { state } = useMachine(pokemonList)
+const { hasState, list, error } = usePokemonList()
 </script>
