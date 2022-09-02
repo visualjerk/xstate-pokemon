@@ -12,8 +12,8 @@
 </template>
 
 <script setup lang="ts">
-import { useMachine } from '@xstate/vue';
-import { pokemonList } from '../state/pokemon-list';
+import { useMachine } from '@xstate/vue'
+import { pokemonList } from '@infrastructure/state/pokemon-list'
 
-const { state, send } = useMachine(pokemonList);
+const { state, send } = useMachine(pokemonList)
 </script>

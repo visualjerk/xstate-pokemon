@@ -18,13 +18,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useRoute } from 'vue-router';
-import { useMachine } from '@xstate/vue';
-import { pokemonDetails } from '../state/pokemon-details';
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { useMachine } from '@xstate/vue'
+import { pokemonDetails } from '@infrastructure/state/pokemon-details'
 
-const route = useRoute();
-const name = computed(() => route.params.name);
+const route = useRoute()
+const name = computed(() => route.params.name)
 
-const { state, send } = useMachine(pokemonDetails(name.value));
+const { state, send } = useMachine(pokemonDetails(name.value))
 </script>
