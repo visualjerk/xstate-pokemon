@@ -7,3 +7,5 @@ export interface IPokemon {
   abilities: IAbility[]
   imageUrl: string
 }
+
+export type IPokemonReference = Pick<IPokemon, 'name'>

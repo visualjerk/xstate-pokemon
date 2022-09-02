@@ -1,5 +1,9 @@
 import { IPokemonService } from '@domain/services/pokemon-service'
 
+interface PokemonListItemDTO {
+  name: string
+}
+
 interface PokemonDetailsDTO {
   name: string
   abilities: { ability: { name: string } }[]
@@ -11,7 +15,7 @@ interface PokemonDetailsDTO {
 export const pokemonHttpRepository: IPokemonService = {
   getList() {
     return fetch(`https://pokeapi.co/api/v2/pokemon`)
-      .then((response) => response.json())
+      .then((response) => response.json() as Promise<PokemonListItemDTO[]>)
       .then((json) => json)
   },
   getDetails(name) {
