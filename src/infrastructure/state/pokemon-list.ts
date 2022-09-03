@@ -1,4 +1,4 @@
-import { createMachine, assign } from 'xstate'
+import { createMachine, assign, ServiceMap } from 'xstate'
 import { pokemonHttpRepository } from '@infrastructure/repositories/pokemon-http'
 import { IPokemon } from '@domain/entities/pokemon'
 
@@ -35,29 +35,36 @@ export const pokemonList = createMachine<
   TPokemonListContext,
   any,
   TPokemonListStateContext
->({
-  id: 'pokemon',
-  initial: 'loading',
-  states: {
-    loading: {
-      invoke: {
-        id: 'fetch-pokemon-list',
-        src: pokemonHttpRepository.getList,
-        onDone: {
-          target: 'loaded',
-          actions: assign({
-            list: (context, event) => event.data.results,
-          }),
-        },
-        onError: {
-          target: 'failed',
-          actions: assign({
-            error: (context, event) => event.data,
-          }),
+>(
+  {
+    id: 'pokemon',
+    initial: 'loading',
+    states: {
+      loading: {
+        invoke: {
+          id: 'fetch-pokemon-list',
+          src: 'getList',
+          onDone: {
+            target: 'loaded',
+            actions: assign({
+              list: (context, event) => event.data,
+            }),
+          },
+          onError: {
+            target: 'failed',
+            actions: assign({
+              error: (context, event) => event.data,
+            }),
+          },
         },
       },
+      loaded: {},
+      failed: {},
     },
-    loaded: {},
-    failed: {},
   },
-})
+  {
+    services: {
+      getList: pokemonHttpRepository.getList,
+    },
+  }
+)
