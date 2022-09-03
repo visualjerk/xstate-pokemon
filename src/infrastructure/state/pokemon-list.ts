@@ -1,9 +1,6 @@
-import { createMachine, assign, ServiceMap } from 'xstate'
+import { createMachine, assign } from 'xstate'
 import { pokemonHttpRepository } from '@infrastructure/repositories/pokemon-http'
 import { IPokemon } from '@domain/entities/pokemon'
-
-// TODO: Implement Actors
-// https://xstate.js.org/docs/tutorials/reddit.html#spawning-subreddit-actors
 
 interface TPokemonListContext {
   list: IPokemon[]
