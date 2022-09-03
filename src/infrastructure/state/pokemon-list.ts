@@ -36,6 +36,7 @@ export const pokemonList = createMachine<
   {
     id: 'pokemon',
     initial: 'loading',
+    predictableActionArguments: true,
     states: {
       loading: {
         invoke: {

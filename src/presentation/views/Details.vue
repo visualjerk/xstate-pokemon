@@ -1,8 +1,11 @@
 <template>
   <router-link to="/">Back to List</router-link>
-  <h1>Pokemon {{ name }}</h1>
-  <button @click="favorites.toggle(name)">
-    <template v-if="favorites.contains(name)">Remove from favorites</template>
+  <h1>
+    Pokemon {{ name }}
+    <template v-if="contains(name)"> ⭐ </template>
+  </h1>
+  <button @click="toggle(name)">
+    <template v-if="contains(name)">Remove from favorites</template>
     <template v-else>Add to favorites</template>
   </button>
   <div v-if="hasState('loading')">Loading ...</div>
@@ -31,5 +34,5 @@ const route = useRoute()
 const name = computed(() => route.params.name as string)
 
 const { hasState, error, details } = usePokemonDetails(name)
-const favorites = useFavorites()
+const { toggle, contains } = useFavorites()
 </script>
