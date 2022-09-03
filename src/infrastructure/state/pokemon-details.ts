@@ -32,6 +32,7 @@ export const pokemonDetails = (name: string) =>
   createMachine<TPokemonDetailsContext, any, TPokemonDetailsStateContext>({
     id: 'pokemon',
     initial: 'loading',
+    predictableActionArguments: true,
     states: {
       loading: {
         invoke: {
