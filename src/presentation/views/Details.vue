@@ -16,6 +16,7 @@
   <div v-if="hasState('loaded')">
     <img :src="details.imageUrl" />
     <h2>Abilities</h2>
+    <p v-if="details.isSkilled">Very Skilled</p>
     <ul>
       <li v-for="ability in details.abilities" :key="ability.name">
         {{ ability.name }}

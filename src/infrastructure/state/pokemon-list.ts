@@ -1,5 +1,5 @@
 import { createMachine, assign } from 'xstate'
-import { pokemonHttpRepository } from '@infrastructure/repositories/pokemon-http'
+import { pokemonHttpDataSource } from '@infrastructure/data-sources/pokemon-http'
 import { IPokemon } from '@domain/entities/pokemon'
 
 interface TPokemonListContext {
@@ -62,7 +62,7 @@ export const pokemonList = createMachine<
   },
   {
     services: {
-      getList: pokemonHttpRepository.getList,
+      getList: pokemonHttpDataSource.getList,
     },
   }
 )

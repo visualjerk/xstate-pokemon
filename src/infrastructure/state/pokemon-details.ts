@@ -1,5 +1,5 @@
 import { createMachine, assign } from 'xstate'
-import { pokemonHttpRepository } from '@infrastructure/repositories/pokemon-http'
+import { pokemonHttpDataSource } from '@infrastructure/data-sources/pokemon-http'
 import { IPokemon } from '@domain/entities/pokemon'
 
 interface TPokemonDetailsContext {
@@ -37,7 +37,7 @@ export const pokemonDetails = (name: string) =>
       loading: {
         invoke: {
           id: 'fetch-pokemon-details',
-          src: () => pokemonHttpRepository.getDetails(name),
+          src: () => pokemonHttpDataSource.getDetails(name),
           onDone: {
             target: 'loaded',
             actions: assign({

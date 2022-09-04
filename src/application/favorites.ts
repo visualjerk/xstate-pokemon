@@ -1,7 +1,7 @@
-import { favoritesStorageRepository } from '@infrastructure/repositories/favorites-storage'
+import { favoritesStorageDataSource } from '@infrastructure/data-sources/favorites-storage'
 import { reactive } from 'vue'
 
-const favoritesStorageRef = reactive(favoritesStorageRepository)
+const favoritesStorageRef = reactive(favoritesStorageDataSource)
 
 export function useFavorites() {
   return {

@@ -13,10 +13,10 @@
     "lib": ["ESNext", "DOM"],
     "skipLibCheck": true,
     "paths": {
-      "@application/*": ["src/application/*"],
-      "@domain/*": ["src/domain/*"],
-      "@infrastructure/*": ["src/infrastructure/*"],
-      "@presentation/*": ["src/presentation/*"],
+      "@application/*": ["./src/application/*"],
+      "@domain/*": ["./src/domain/*"],
+      "@infrastructure/*": ["./src/infrastructure/*"],
+      "@presentation/*": ["./src/presentation/*"],
     }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],

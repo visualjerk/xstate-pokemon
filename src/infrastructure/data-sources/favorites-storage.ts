@@ -1,4 +1,4 @@
-import { IFavoritesService } from '@domain/services/favorites-service'
+import { IFavoritesRepository } from '@domain/repositories/favorites'
 
 const STORAGE_KEY = 'POKEMON_FAVORITES'
 
@@ -14,7 +14,7 @@ function saveItems(items: Map<string, string>) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(items.entries())))
 }
 
-export class FavoritesStorageRepository implements IFavoritesService {
+export class FavoritesStorageDataSource implements IFavoritesRepository {
   items: Map<string, string>
 
   constructor() {
@@ -36,4 +36,4 @@ export class FavoritesStorageRepository implements IFavoritesService {
   }
 }
 
-export const favoritesStorageRepository = new FavoritesStorageRepository()
+export const favoritesStorageDataSource = new FavoritesStorageDataSource()

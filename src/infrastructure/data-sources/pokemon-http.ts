@@ -1,4 +1,5 @@
-import { IPokemonService } from '@domain/services/pokemon-service'
+import { Pokemon } from '@domain/entities/pokemon'
+import { IPokemonRepository } from '@domain/repositories/pokemon'
 
 interface PokemonListDTO {
   results: {
@@ -14,7 +15,7 @@ interface PokemonDetailsDTO {
   }
 }
 
-export const pokemonHttpRepository: IPokemonService = {
+export const pokemonHttpDataSource: IPokemonRepository = {
   getList() {
     return fetch(`https://pokeapi.co/api/v2/pokemon`)
       .then((response) => response.json() as Promise<PokemonListDTO>)
@@ -23,12 +24,15 @@ export const pokemonHttpRepository: IPokemonService = {
   getDetails(name) {
     return fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
       .then((response) => response.json() as Promise<PokemonDetailsDTO>)
-      .then((json) => ({
-        name: json.name,
-        abilities: json.abilities.map(({ ability }) => ({
-          name: ability.name,
-        })),
-        imageUrl: json.sprites.front_default,
-      }))
+      .then(
+        (json) =>
+          new Pokemon({
+            name: json.name,
+            abilities: json.abilities.map(({ ability }) => ({
+              name: ability.name,
+            })),
+            imageUrl: json.sprites.front_default,
+          })
+      )
   },
 }
