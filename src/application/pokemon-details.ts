@@ -1,8 +1,10 @@
 import { computed, Ref } from 'vue'
 import { useMachine } from '@xstate/vue'
-import { pokemonDetails } from '@infrastructure/state/pokemon-details'
+import { createPokemonDetails } from '@domain/state/pokemon-details'
+import { pokemonHttpDataSource } from '@infrastructure/data-sources/pokemon-http'
 
 export function usePokemonDetails(name: Ref<string>) {
+  const pokemonDetails = createPokemonDetails(pokemonHttpDataSource)
   const { state } = useMachine(pokemonDetails(name.value))
 
   return {
