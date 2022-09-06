@@ -9,16 +9,14 @@
     <li v-for="pokemon in list" :key="pokemon.name">
       <router-link :to="`/pokemon/${pokemon.name}`">
         {{ pokemon.name }}
-        <template v-if="contains(pokemon.name)"> ⭐ </template>
+        <template v-if="pokemon.isFavorite"> ⭐ </template>
       </router-link>
     </li>
   </ul>
 </template>
 
 <script setup lang="ts">
-import { useFavorites } from '@application/favorites'
 import { usePokemonList } from '@application/pokemon-list'
 
 const { hasState, list, error } = usePokemonList()
-const { contains } = useFavorites()
 </script>

@@ -9,6 +9,14 @@ export interface IPokemon {
   isSkilled: boolean
 }
 
+export type IPokemonReference = Pick<IPokemon, 'name'>
+
+export interface IUserPokemon extends IPokemon {
+  isFavorite: boolean
+}
+
+export type IUserPokemonReference = Pick<IUserPokemon, 'name' | 'isFavorite'>
+
 export class Pokemon implements IPokemon {
   name: string
   abilities: IAbility[]
@@ -25,4 +33,11 @@ export class Pokemon implements IPokemon {
   }
 }
 
-export type IPokemonReference = Pick<IPokemon, 'name'>
+export class UserPokemon extends Pokemon implements IUserPokemon {
+  isFavorite: boolean
+
+  constructor(options: Omit<IUserPokemon, 'isSkilled'>) {
+    super(options)
+    this.isFavorite = options.isFavorite
+  }
+}

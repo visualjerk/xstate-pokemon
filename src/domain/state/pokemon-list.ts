@@ -1,9 +1,10 @@
-import { IPokemon } from '@domain/entities/pokemon'
+import { IUserPokemonReference } from '@domain/entities/pokemon'
 import { IPokemonRepository } from '@domain/repositories/pokemon'
+import { IUserSettingsRepository } from '@domain/repositories/user-settings'
 import { createMachine, assign } from 'xstate'
 
 interface TPokemonListContext {
-  list: IPokemon[]
+  list: IUserPokemonReference[]
   error: Error
 }
 
@@ -28,8 +29,20 @@ type TPokemonListStateContext =
       }
     }
 
-export const createPokemonList = (pokemonDataSource: IPokemonRepository) =>
-  createMachine<TPokemonListContext, any, TPokemonListStateContext>(
+export const createPokemonList = (
+  pokemonDataSource: IPokemonRepository,
+  userSettingsDataSource: IUserSettingsRepository
+) => {
+  async function getList(): Promise<IUserPokemonReference[]> {
+    const settings = await userSettingsDataSource.get()
+    const list = await pokemonDataSource.getList()
+    return list.map((pokemon) => ({
+      ...pokemon,
+      isFavorite: settings.favorites.has(pokemon.name),
+    }))
+  }
+
+  return createMachine<TPokemonListContext, any, TPokemonListStateContext>(
     {
       id: 'pokemon',
       initial: 'loading',
@@ -59,7 +72,8 @@ export const createPokemonList = (pokemonDataSource: IPokemonRepository) =>
     },
     {
       services: {
-        getList: pokemonDataSource.getList,
+        getList,
       },
     }
   )
+}

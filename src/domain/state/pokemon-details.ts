@@ -1,17 +1,26 @@
 import { createMachine, assign } from 'xstate'
-import { IPokemon } from '@domain/entities/pokemon'
+import { IUserPokemon, UserPokemon } from '@domain/entities/pokemon'
 import { IPokemonRepository } from '@domain/repositories/pokemon'
+import { IUserSettingsRepository } from '@domain/repositories/user-settings'
 
 interface TPokemonDetailsContext {
-  details: IPokemon
+  details: IUserPokemon
   error: Error
 }
+
+type TPokemonDetailsEvents = { type: 'TOGGLE_FAVORITE' }
 
 type TPokemonDetailsStateContext =
   | {
       value: 'loading'
       context: TPokemonDetailsContext & {
         details: null
+        error: null
+      }
+    }
+  | {
+      value: 'togglelingFavorite'
+      context: TPokemonDetailsContext & {
         error: null
       }
     }
@@ -28,9 +37,41 @@ type TPokemonDetailsStateContext =
       }
     }
 
-export const createPokemonDetails =
-  (pokemonDataSource: IPokemonRepository) => (name: string) =>
-    createMachine<TPokemonDetailsContext, any, TPokemonDetailsStateContext>({
+export const createPokemonDetails = (
+  pokemonDataSource: IPokemonRepository,
+  userSettingsDataSource: IUserSettingsRepository
+) => {
+  async function getDetails(name: string): Promise<IUserPokemon> {
+    const settings = await userSettingsDataSource.get()
+    const pokemon = await pokemonDataSource.getDetails(name)
+
+    return new UserPokemon({
+      ...pokemon,
+      isFavorite: settings.favorites.has(name),
+    })
+  }
+
+  async function toggleFavorite(pokemon: IUserPokemon): Promise<IUserPokemon> {
+    const settings = await userSettingsDataSource.get()
+    if (settings.favorites.get(pokemon.name)) {
+      settings.favorites.delete(pokemon.name)
+    } else {
+      settings.favorites.set(pokemon.name, pokemon.name)
+    }
+    await userSettingsDataSource.save(settings)
+
+    return new UserPokemon({
+      ...pokemon,
+      isFavorite: settings.favorites.has(pokemon.name),
+    })
+  }
+
+  return (name: string) =>
+    createMachine<
+      TPokemonDetailsContext,
+      TPokemonDetailsEvents,
+      TPokemonDetailsStateContext
+    >({
       id: 'pokemon',
       initial: 'loading',
       predictableActionArguments: true,
@@ -38,7 +79,25 @@ export const createPokemonDetails =
         loading: {
           invoke: {
             id: 'fetch-pokemon-details',
-            src: () => pokemonDataSource.getDetails(name),
+            src: () => getDetails(name),
+            onDone: {
+              target: 'loaded',
+              actions: assign({
+                details: (context, event) => event.data,
+              }),
+            },
+            onError: {
+              target: 'failed',
+              actions: assign({
+                error: (context, event) => event.data,
+              }),
+            },
+          },
+        },
+        togglelingFavorite: {
+          invoke: {
+            id: 'toggle-favorite',
+            src: (context) => toggleFavorite(context.details),
             onDone: {
               target: 'loaded',
               actions: assign({
@@ -56,4 +115,8 @@ export const createPokemonDetails =
         loaded: {},
         failed: {},
       },
+      on: {
+        TOGGLE_FAVORITE: 'togglelingFavorite',
+      },
     })
+}
