@@ -19,7 +19,7 @@ type TPokemonDetailsStateContext =
       }
     }
   | {
-      value: 'togglelingFavorite'
+      value: { loading: 'togglingFavorite' }
       context: TPokemonDetailsContext & {
         error: null
       }
@@ -94,29 +94,37 @@ export const createPokemonDetails = (
             },
           },
         },
-        togglelingFavorite: {
-          invoke: {
-            id: 'toggle-favorite',
-            src: (context) => toggleFavorite(context.details),
-            onDone: {
-              target: 'loaded',
-              actions: assign({
-                details: (context, event) => event.data,
-              }),
-            },
-            onError: {
-              target: 'failed',
-              actions: assign({
-                error: (context, event) => event.data,
-              }),
+        loaded: {
+          id: 'loaded',
+          initial: 'idle',
+          states: {
+            idle: {},
+            togglingFavorite: {
+              invoke: {
+                id: 'toggle-favorite',
+                src: (context) => toggleFavorite(context.details),
+                onDone: {
+                  target: '#loaded',
+                  actions: assign({
+                    details: (context, event) => event.data,
+                  }),
+                },
+                onError: {
+                  target: '#failed',
+                  actions: assign({
+                    error: (context, event) => event.data,
+                  }),
+                },
+              },
             },
           },
+          on: {
+            TOGGLE_FAVORITE: '.togglingFavorite',
+          },
         },
-        loaded: {},
-        failed: {},
-      },
-      on: {
-        TOGGLE_FAVORITE: 'togglelingFavorite',
+        failed: {
+          id: 'failed',
+        },
       },
     })
 }

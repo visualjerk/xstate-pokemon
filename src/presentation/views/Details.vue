@@ -23,9 +23,17 @@
     <div class="mb-6">
       <button
         @click="toggleFavorite"
-        :disabled="hasState('togglelingFavorite')"
+        :disabled="
+          hasState({
+            loading: 'togglingFavorite',
+          })
+        "
         class="px-2 py-1 bg-blue-700 text-blue-50 rounded-sm"
-        :class="hasState('togglelingFavorite') && 'bg-blue-400'"
+        :class="
+          hasState({
+            loading: 'togglingFavorite',
+          }) && 'bg-blue-400'
+        "
       >
         <template v-if="details.isFavorite">Remove from favorites</template>
         <template v-else>Add to favorites</template>
