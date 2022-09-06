@@ -53,6 +53,7 @@ export const createPokemonDetails = (
 
   async function toggleFavorite(pokemon: IUserPokemon): Promise<IUserPokemon> {
     const settings = await userSettingsDataSource.get()
+    console.log(settings.favorites)
     if (settings.favorites.get(pokemon.name)) {
       settings.favorites.delete(pokemon.name)
     } else {
@@ -104,7 +105,7 @@ export const createPokemonDetails = (
                 id: 'toggle-favorite',
                 src: (context) => toggleFavorite(context.details),
                 onDone: {
-                  target: '#loaded',
+                  target: '#loaded.idle',
                   actions: assign({
                     details: (context, event) => event.data,
                   }),
