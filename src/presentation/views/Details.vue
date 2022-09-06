@@ -25,13 +25,13 @@
         @click="toggleFavorite"
         :disabled="
           hasState({
-            loading: 'togglingFavorite',
+            loaded: 'togglingFavorite',
           })
         "
         class="px-2 py-1 bg-blue-700 text-blue-50 rounded-sm"
         :class="
           hasState({
-            loading: 'togglingFavorite',
+            loaded: 'togglingFavorite',
           }) && 'bg-blue-400'
         "
       >

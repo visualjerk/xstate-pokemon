@@ -19,13 +19,13 @@ type TPokemonDetailsStateContext =
       }
     }
   | {
-      value: { loading: 'togglingFavorite' }
+      value: 'loaded'
       context: TPokemonDetailsContext & {
         error: null
       }
     }
   | {
-      value: 'loaded'
+      value: { loaded: 'togglingFavorite' }
       context: TPokemonDetailsContext & {
         error: null
       }

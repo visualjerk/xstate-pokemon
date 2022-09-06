@@ -18,6 +18,6 @@ export const userSettingsStorageDataSource: IUserSettingsRepository = {
       FAVORITES_STORAGE_KEY,
       JSON.stringify(Array.from(settings.favorites.entries()))
     )
-    return Promise.resolve()
+    return new Promise((resolve) => setTimeout(resolve, 300))
   },
 }
