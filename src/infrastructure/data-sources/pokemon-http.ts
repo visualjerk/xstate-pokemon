@@ -1,4 +1,4 @@
-import { Pokemon } from '@domain/entities/pokemon'
+import { Pokemon, PokemonReference } from '@domain/entities/pokemon'
 import { IPokemonRepository } from '@domain/repositories/pokemon'
 
 interface PokemonListDTO {
@@ -19,7 +19,9 @@ export const pokemonHttpDataSource: IPokemonRepository = {
   getList() {
     return fetch(`https://pokeapi.co/api/v2/pokemon`)
       .then((response) => response.json() as Promise<PokemonListDTO>)
-      .then((json) => json.results.map(({ name }) => ({ name })))
+      .then((json) =>
+        json.results.map(({ name }) => new PokemonReference({ name }))
+      )
   },
   getDetails(name) {
     return fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)

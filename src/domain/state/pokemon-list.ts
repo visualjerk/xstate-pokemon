@@ -1,4 +1,7 @@
-import { IUserPokemonReference } from '@domain/entities/pokemon'
+import {
+  IUserPokemonReference,
+  UserPokemonReference,
+} from '@domain/entities/pokemon'
 import { IPokemonRepository } from '@domain/repositories/pokemon'
 import { IUserSettingsRepository } from '@domain/repositories/user-settings'
 import { createMachine, assign } from 'xstate'
@@ -36,10 +39,13 @@ export const createPokemonList = (
   async function getList(): Promise<IUserPokemonReference[]> {
     const settings = await userSettingsDataSource.get()
     const list = await pokemonDataSource.getList()
-    return list.map((pokemon) => ({
-      ...pokemon,
-      isFavorite: settings.favorites.has(pokemon.name),
-    }))
+    return list.map(
+      (pokemon) =>
+        new UserPokemonReference({
+          ...pokemon,
+          isFavorite: settings.favorites.has(pokemon.name),
+        })
+    )
   }
 
   return createMachine<TPokemonListContext, any, TPokemonListStateContext>(

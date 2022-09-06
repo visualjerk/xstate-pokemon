@@ -1,26 +1,42 @@
 <template>
-  <router-link to="/">Back to List</router-link>
-  <h1>
-    Pokemon {{ name }}
-    <template v-if="hasState('loaded') && details.isFavorite"> ⭐ </template>
-  </h1>
+  <div class="mb-6">
+    <router-link to="/" class="text-blue-600">Back to List</router-link>
+  </div>
   <div v-if="hasState('loading')">Loading ...</div>
   <div v-if="hasState('failed')">
     <h2>Failed to load</h2>
     <p>Error: {{ error }}</p>
   </div>
   <div v-if="hasState('loaded')">
-    <div>
-      <button @click="toggleFavorite">
+    <div class="flex items-center gap-4 mb-8">
+      <div
+        class="flex-shrink-0 w-20 h-20 flex items-center justify-center rounded-full shadow-md"
+      >
+        <img :src="details.imageUrl" />
+      </div>
+      <h1 class="text-3xl flex-grow">
+        {{ details.displayName }}
+        <template v-if="details.isFavorite"> ⭐ </template>
+      </h1>
+    </div>
+
+    <div class="mb-6">
+      <button
+        @click="toggleFavorite"
+        class="px-2 py-1 bg-blue-700 text-blue-50 rounded-sm"
+      >
         <template v-if="details.isFavorite">Remove from favorites</template>
         <template v-else>Add to favorites</template>
       </button>
     </div>
-    <img :src="details.imageUrl" />
-    <h2>Abilities</h2>
-    <p v-if="details.isSkilled">Very Skilled</p>
-    <ul>
-      <li v-for="ability in details.abilities" :key="ability.name">
+    <h2 class="text-2xl mb-3">Abilities</h2>
+    <p v-if="details.isSkilled" class="text-gray-600 font-bold">Very Skilled</p>
+    <ul class="grid gap-2">
+      <li
+        v-for="ability in details.abilities"
+        :key="ability.name"
+        class="p-3 shadow-md rounded-sm"
+      >
         {{ ability.name }}
       </li>
     </ul>
